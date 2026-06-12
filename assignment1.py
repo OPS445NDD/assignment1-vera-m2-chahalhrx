@@ -3,11 +3,11 @@
 '''
 OPS445 Assignment 1
 Program: assignment1.py 
-Author: "Student Name"
-Semester: "Fall/Winter/Summer YYYY"
+Author: "ROHIT ROHIT"
+Semester: "Summer 2026"
 
 The python code in this file (assignment1.py) is original work written by
-"Student Name". No code in this file is copied from any other source
+"ROHIT ROHIT". No code in this file is copied from any other source
 except those provided by the course instructor, including any person,
 textbook, or on-line resource. I have not shared this python script
 with anyone or anything except for submission for grading. I understand
@@ -27,9 +27,36 @@ def day_of_week(year: int, month: int, date: int) -> str:
     return days[num]
 
 
+def leap_year(year: int) -> bool:
+    "return True if the year is a leap year"
+    lyear = year % 4
+    if lyear == 0:
+        leap = True
+    else:
+        leap = False
+
+    lyear = year % 100
+    if lyear == 0:
+        leap = False
+
+    lyear = year % 400
+    if lyear == 0:
+        leap = True
+
+    return leap
+
+
 def mon_max(month:int, year:int) -> int:
     "returns the maximum day for a given month. Includes leap year check"
-    ...
+    if leap_year(year):
+        feb_max = 29
+    else:
+        feb_max = 28
+
+    mon_dict = { 1:31, 2:feb_max, 3:31, 4:30, 5:31, 6:30, 7:31, 8:31, 9:30, 10:31, 11:30, 12:31}
+
+    return mon_dict[month]
+
 
 def after(date: str) -> str:
     '''
@@ -37,32 +64,17 @@ def after(date: str) -> str:
 
     Return the date for the next day of the given date in YYYY-MM-DD format.
     This function takes care of the number of days in February for leap year.
-    This fucntion has been tested to work for year after 1582
+    This function has been tested to work for year after 1582
     '''
     str_year, str_month, str_day = date.split('-')
     year = int(str_year)
     month = int(str_month)
     day = int(str_day)
-    lyear = year % 4
-    if lyear == 0:
-        feb_max = 29 # this is a leap year
-    else:
-        feb_max = 28 # this is not a leap year
 
-    lyear = year % 100
-    if lyear == 0:
-        feb_max = 28 # this is not a leap year
+    tmp_day = day + 1
 
-    lyear = year % 400
-    if lyear == 0:
-        feb_max = 29 # this is a leap year
-
-    mon_max = { 1:31, 2:feb_max, 3:31, 4:30, 5:31, 6:30, 7:31, 8:31, 9:30, 10:31, 11:30, 12:31}
-
-    tmp_day = day + 1  # next day
-
-    if tmp_day > mon_max[month]:
-        to_day = tmp_day % mon_max[month]  # if tmp_day > this month's max, reset to 1 
+    if tmp_day > mon_max(month, year):
+        to_day = tmp_day % mon_max(month, year)
         tmp_month = month + 1
     else:
         to_day = tmp_day
@@ -84,17 +96,67 @@ def usage():
     ...
 
 
-def leap_year(year: int) -> bool:
-    "return True if the year is a leap year"
-    ...
-
 def valid_date(date: str) -> bool:
     "check validity of date and return True if valid"
-    ...
+    try:
+        str_year, str_month, str_day = date.split('-')
+        year = int(str_year)
+        month = int(str_month)
+        day = int(str_day)
+    except:
+        return False
+
+    if len(str_year) != 4:
+        return False
+
+    if month < 1:
+        return False
+
+    if month > 12:
+        return False
+
+    if day < 1:
+        return False
+
+    if day > mon_max(month, year):
+        return False
+
+    return True
 
 def day_count(start_date: str, stop_date: str) -> int:
     "Loops through range of dates, and returns number of weekend days"
-    ...
+    weekend_count = 0
+    current_date = start_date
+
+    while current_date != stop_date:
+        str_year, str_month, str_day = current_date.split('-')
+        year = int(str_year)
+        month = int(str_month)
+        day = int(str_day)
+
+        day_name = day_of_week(year, month, day)
+
+        if day_name == 'sat':
+            weekend_count = weekend_count + 1
+        elif day_name == 'sun':
+            weekend_count = weekend_count + 1
+
+        current_date = after(current_date)
+
+    str_year, str_month, str_day = stop_date.split('-')
+    year = int(str_year)
+    month = int(str_month)
+    day = int(str_day)
+
+    day_name = day_of_week(year, month, day)
+
+    if day_name == 'sat':
+        weekend_count = weekend_count + 1
+    elif day_name == 'sun':
+        weekend_count = weekend_count + 1
+
+    return weekend_count
+
 
 if __name__ == "__main__":
     ...
